@@ -92,6 +92,24 @@ func (r *Reflection) NewIo(obj any) *ReflectionIo {
 	}
 }
 
+// KindByName returns the reflect kind for a given field by name
+func (r *Reflection) KindByName(fieldName string) (reflect.Kind, error) {
+	idx, ok := r.idxByName[fieldName]
+	if !ok {
+		return reflect.Invalid, fmt.Errorf("Unknown field name \"%s\"", fieldName)
+	}
+	return r.fieldByIdx[idx].Type.Kind(), nil
+}
+
+// KindByTagKey returns the reflect kind for a given tag key
+func (r *Reflection) KindByTagKey(fieldName string) (reflect.Kind, error) {
+	idx, ok := r.idxByTagKey[fieldName]
+	if !ok {
+		return reflect.Invalid, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
+	}
+	return r.fieldByIdx[idx].Type.Kind(), nil
+}
+
 type ReflectionIo struct {
 	reflection *Reflection
 	valueByIdx map[int]reflect.Value
