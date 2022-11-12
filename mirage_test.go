@@ -6,9 +6,10 @@ import (
 )
 
 type Book struct {
-	Title    string `json:"title"`
-	Author   string `json:"author"`
-	NumPages int    `json:"num_pages"`
+	Title    string  `json:"title"`
+	Author   string  `json:"author"`
+	NumPages int     `json:"num_pages"`
+	ISBN     *string `json:"isbn"`
 }
 
 func TestReflect(t *testing.T) {
@@ -168,7 +169,7 @@ func TestKindByName(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if kind != reflect.String {
+	if kind.Kind != reflect.String {
 		t.Error("Incorrectly reported kind")
 		return
 	}
@@ -187,7 +188,32 @@ func TestKindByTagKey(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if kind != reflect.String {
+	if kind.Kind != reflect.String {
+		t.Error("Incorrectly reported kind")
+		return
+	}
+}
+
+func TestKindByNameNullable(t *testing.T) {
+	isbn := "1234-1234"
+	book := &Book{
+		Title:    "Mr. Black",
+		Author:   "Mrs. White",
+		NumPages: 333,
+		ISBN:     &isbn,
+	}
+	meta := Reflect(book, "")
+
+	kind, err := meta.KindByName("ISBN")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if !kind.IsPointer {
+		t.Error("Incorrectly reported pointer type")
+		return
+	}
+	if kind.Kind != reflect.String {
 		t.Error("Incorrectly reported kind")
 		return
 	}
