@@ -19,7 +19,7 @@ var Invalid = &Kind{
 type Reflection struct {
 	idxByName   map[string]int
 	idxByTagKey map[string]int
-	fieldByIdx  map[int]reflect.StructField
+	fieldByIdx  map[int]*reflect.StructField
 	kindByIdx   map[int]*Kind
 	elem        reflect.Value
 }
@@ -28,7 +28,7 @@ type Reflection struct {
 func Reflect(obj any, tagName string) *Reflection {
 	idxByName := map[string]int{}
 	idxByTagKey := map[string]int{}
-	fieldByIdx := map[int]reflect.StructField{}
+	fieldByIdx := map[int]*reflect.StructField{}
 	kindByIdx := map[int]*Kind{}
 
 	value := reflect.ValueOf(obj)
@@ -48,7 +48,7 @@ func Reflect(obj any, tagName string) *Reflection {
 			}
 		}
 		idxByName[field.Name] = idx
-		fieldByIdx[idx] = field
+		fieldByIdx[idx] = &field
 
 		kind := field.Type.Kind()
 		isPointer := false
@@ -133,6 +133,29 @@ func (r *Reflection) KindByTagKey(fieldName string) (*Kind, error) {
 		return Invalid, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
 	}
 	return r.kindByIdx[idx], nil
+}
+
+// FieldByName returns a field struct by field name
+func (r *Reflection) FieldByName(fieldName string) (*reflect.StructField, error) {
+	idx, ok := r.idxByTagKey[fieldName]
+	if !ok {
+		return nil, fmt.Errorf("Unknown field name \"%s\"", fieldName)
+	}
+
+	return r.fieldByIdx[idx], nil
+}
+
+// FieldByIdx returns a field struct by index
+func (r *Reflection) FieldByIdx(idx int) (*reflect.StructField, error) {
+	if idx > len(r.fieldByIdx) {
+		return nil, fmt.Errorf("Index is out of bounds")
+	}
+	return r.fieldByIdx[idx], nil
+}
+
+// NumFields returns the number of fields on the structure
+func (r *Reflection) NumFields() int {
+	return len(r.fieldByIdx)
 }
 
 type ReflectionIo struct {

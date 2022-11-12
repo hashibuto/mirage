@@ -12,11 +12,14 @@ import "github.com/hashibuto/mirage"
 - [type Kind](<#type-kind>)
 - [type Reflection](<#type-reflection>)
   - [func Reflect(obj any, tagName string) *Reflection](<#func-reflect>)
+  - [func (r *Reflection) FieldByIdx(idx int) (*reflect.StructField, error)](<#func-reflection-fieldbyidx>)
+  - [func (r *Reflection) FieldByName(fieldName string) (*reflect.StructField, error)](<#func-reflection-fieldbyname>)
   - [func (r *Reflection) Io() *ReflectionIo](<#func-reflection-io>)
   - [func (r *Reflection) Keys() []string](<#func-reflection-keys>)
   - [func (r *Reflection) KindByName(fieldName string) (*Kind, error)](<#func-reflection-kindbyname>)
   - [func (r *Reflection) KindByTagKey(fieldName string) (*Kind, error)](<#func-reflection-kindbytagkey>)
   - [func (r *Reflection) NewIo(obj any) *ReflectionIo](<#func-reflection-newio>)
+  - [func (r *Reflection) NumFields() int](<#func-reflection-numfields>)
   - [func (r *Reflection) TagKeys() []string](<#func-reflection-tagkeys>)
 - [type ReflectionIo](<#type-reflectionio>)
   - [func (r *ReflectionIo) SetValueByName(name string, value any) error](<#func-reflectionio-setvaluebyname>)
@@ -62,6 +65,22 @@ func Reflect(obj any, tagName string) *Reflection
 
 Reflect produces a reflected version of "obj", including information about tag key names indicated by "tagName"
 
+### func \(\*Reflection\) [FieldByIdx](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L149>)
+
+```go
+func (r *Reflection) FieldByIdx(idx int) (*reflect.StructField, error)
+```
+
+FieldByIdx returns a field struct by index
+
+### func \(\*Reflection\) [FieldByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L139>)
+
+```go
+func (r *Reflection) FieldByName(fieldName string) (*reflect.StructField, error)
+```
+
+FieldByName returns a field struct by field name
+
 ### func \(\*Reflection\) [Io](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L96>)
 
 ```go
@@ -102,6 +121,14 @@ func (r *Reflection) NewIo(obj any) *ReflectionIo
 
 Io returns a reflection io object for a new instance of the reflected object
 
+### func \(\*Reflection\) [NumFields](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L157>)
+
+```go
+func (r *Reflection) NumFields() int
+```
+
+NumFields returns the number of fields on the structure
+
 ### func \(\*Reflection\) [TagKeys](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L86>)
 
 ```go
@@ -110,7 +137,7 @@ func (r *Reflection) TagKeys() []string
 
 TagKeys returns an array of keys garnered from a given tag name
 
-## type [ReflectionIo](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L138-L141>)
+## type [ReflectionIo](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L161-L164>)
 
 ```go
 type ReflectionIo struct {
@@ -118,7 +145,7 @@ type ReflectionIo struct {
 }
 ```
 
-### func \(\*ReflectionIo\) [SetValueByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L164>)
+### func \(\*ReflectionIo\) [SetValueByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L187>)
 
 ```go
 func (r *ReflectionIo) SetValueByName(name string, value any) error
@@ -126,7 +153,7 @@ func (r *ReflectionIo) SetValueByName(name string, value any) error
 
 SetValueByName sets a value on the reflected object using the field name
 
-### func \(\*ReflectionIo\) [SetValueByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L175>)
+### func \(\*ReflectionIo\) [SetValueByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L198>)
 
 ```go
 func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error
@@ -134,7 +161,7 @@ func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error
 
 SetValueByTagKey sets a value on the reflected object using the tag key
 
-### func \(\*ReflectionIo\) [ValueFromName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L144>)
+### func \(\*ReflectionIo\) [ValueFromName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L167>)
 
 ```go
 func (r *ReflectionIo) ValueFromName(name string) (any, error)
@@ -142,7 +169,7 @@ func (r *ReflectionIo) ValueFromName(name string) (any, error)
 
 ValueFromName returns the struct value referenced by the field name
 
-### func \(\*ReflectionIo\) [ValueFromTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L154>)
+### func \(\*ReflectionIo\) [ValueFromTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L177>)
 
 ```go
 func (r *ReflectionIo) ValueFromTagKey(tagKey string) (any, error)
