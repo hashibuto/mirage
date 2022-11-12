@@ -26,6 +26,8 @@ import "github.com/hashibuto/mirage"
 - [type ReflectionIo](<#type-reflectionio>)
   - [func (r *ReflectionIo) SetValueByName(name string, value any) error](<#func-reflectionio-setvaluebyname>)
   - [func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error](<#func-reflectionio-setvaluebytagkey>)
+  - [func (r *ReflectionIo) SetValueIdx(idx int, value any) error](<#func-reflectionio-setvalueidx>)
+  - [func (r *ReflectionIo) ValueFromIdx(idx int) (any, error)](<#func-reflectionio-valuefromidx>)
   - [func (r *ReflectionIo) ValueFromName(name string) (any, error)](<#func-reflectionio-valuefromname>)
   - [func (r *ReflectionIo) ValueFromTagKey(tagKey string) (any, error)](<#func-reflectionio-valuefromtagkey>)
 - [type StringSet](<#type-stringset>)
@@ -162,7 +164,7 @@ type ReflectionIo struct {
 }
 ```
 
-### func \(\*ReflectionIo\) [SetValueByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L211>)
+### func \(\*ReflectionIo\) [SetValueByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L228>)
 
 ```go
 func (r *ReflectionIo) SetValueByName(name string, value any) error
@@ -170,7 +172,7 @@ func (r *ReflectionIo) SetValueByName(name string, value any) error
 
 SetValueByName sets a value on the reflected object using the field name
 
-### func \(\*ReflectionIo\) [SetValueByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L222>)
+### func \(\*ReflectionIo\) [SetValueByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L239>)
 
 ```go
 func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error
@@ -178,7 +180,23 @@ func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error
 
 SetValueByTagKey sets a value on the reflected object using the tag key
 
-### func \(\*ReflectionIo\) [ValueFromName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L191>)
+### func \(\*ReflectionIo\) [SetValueIdx](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L219>)
+
+```go
+func (r *ReflectionIo) SetValueIdx(idx int, value any) error
+```
+
+SetValueIdx sets a value on the reflected object using the field index
+
+### func \(\*ReflectionIo\) [ValueFromIdx](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L191>)
+
+```go
+func (r *ReflectionIo) ValueFromIdx(idx int) (any, error)
+```
+
+ValueFromIdx returns the struct value referenced by the field index
+
+### func \(\*ReflectionIo\) [ValueFromName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L199>)
 
 ```go
 func (r *ReflectionIo) ValueFromName(name string) (any, error)
@@ -186,7 +204,7 @@ func (r *ReflectionIo) ValueFromName(name string) (any, error)
 
 ValueFromName returns the struct value referenced by the field name
 
-### func \(\*ReflectionIo\) [ValueFromTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L201>)
+### func \(\*ReflectionIo\) [ValueFromTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L209>)
 
 ```go
 func (r *ReflectionIo) ValueFromTagKey(tagKey string) (any, error)
