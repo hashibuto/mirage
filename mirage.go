@@ -170,6 +170,18 @@ func (r *Reflection) NumFields() int {
 	return len(r.fieldByIdx)
 }
 
+// HasTagKey returns true if the tag key exists
+func (r *Reflection) HasTagKey(tagKeyName string) bool {
+	_, ok := r.idxByTagKey[tagKeyName]
+	return ok
+}
+
+// HasFieldName returns true if the field name exists
+func (r *Reflection) HasFieldName(fieldName string) bool {
+	_, ok := r.idxByName[fieldName]
+	return ok
+}
+
 type ReflectionIo struct {
 	reflection *Reflection
 	valueByIdx map[int]reflect.Value
