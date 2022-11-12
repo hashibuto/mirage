@@ -1,6 +1,7 @@
 package mirage
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -145,9 +146,49 @@ func TestSetValueByNameNewObj(t *testing.T) {
 
 	if book.NumPages != 333 {
 		t.Error("Original object was damaged despite creating new IO object")
+		return
 	}
 
 	if book2.NumPages != 334 {
 		t.Error("Problem setting value to new object")
+		return
+	}
+}
+
+func TestKindByName(t *testing.T) {
+	book := &Book{
+		Title:    "Mr. Black",
+		Author:   "Mrs. White",
+		NumPages: 333,
+	}
+	meta := Reflect(book, "")
+
+	kind, err := meta.KindByName("Author")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if kind != reflect.String {
+		t.Error("Incorrectly reported kind")
+		return
+	}
+}
+
+func TestKindByTagKey(t *testing.T) {
+	book := &Book{
+		Title:    "Mr. Black",
+		Author:   "Mrs. White",
+		NumPages: 333,
+	}
+	meta := Reflect(book, "json")
+
+	kind, err := meta.KindByTagKey("title")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if kind != reflect.String {
+		t.Error("Incorrectly reported kind")
+		return
 	}
 }
