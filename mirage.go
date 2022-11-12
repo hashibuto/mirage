@@ -187,6 +187,14 @@ type ReflectionIo struct {
 	valueByIdx map[int]reflect.Value
 }
 
+// ValueFromIdx returns the struct value referenced by the field index
+func (r *ReflectionIo) ValueFromIdx(idx int) (any, error) {
+	if idx > len(r.reflection.idxByName) {
+		return nil, fmt.Errorf("Supplied index is out of range")
+	}
+	return r.valueByIdx[idx].Interface(), nil
+}
+
 // ValueFromName returns the struct value referenced by the field name
 func (r *ReflectionIo) ValueFromName(name string) (any, error) {
 	idx, ok := r.reflection.idxByName[name]
@@ -205,6 +213,15 @@ func (r *ReflectionIo) ValueFromTagKey(tagKey string) (any, error) {
 	}
 
 	return r.valueByIdx[idx].Interface(), nil
+}
+
+// SetValueIdx sets a value on the reflected object using the field index
+func (r *ReflectionIo) SetValueIdx(idx int, value any) error {
+	if idx > len(r.reflection.idxByName) {
+		return fmt.Errorf("Supplied index is out of range")
+	}
+	r.valueByIdx[idx].Set(reflect.ValueOf(value))
+	return nil
 }
 
 // SetValueByName sets a value on the reflected object using the field name
