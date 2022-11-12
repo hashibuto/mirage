@@ -164,12 +164,12 @@ func TestKindByName(t *testing.T) {
 	}
 	meta := Reflect(book, "")
 
-	kind, err := meta.KindByName("Author")
+	info, err := meta.InfoByName("Author")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	if kind.Kind != reflect.String {
+	if info.Kind != reflect.String {
 		t.Error("Incorrectly reported kind")
 		return
 	}
@@ -183,12 +183,12 @@ func TestKindByTagKey(t *testing.T) {
 	}
 	meta := Reflect(book, "json")
 
-	kind, err := meta.KindByTagKey("title")
+	info, err := meta.InfoByTagKey("title")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	if kind.Kind != reflect.String {
+	if info.Kind != reflect.String {
 		t.Error("Incorrectly reported kind")
 		return
 	}
@@ -204,16 +204,16 @@ func TestKindByNameNullable(t *testing.T) {
 	}
 	meta := Reflect(book, "")
 
-	kind, err := meta.KindByName("ISBN")
+	info, err := meta.InfoByName("ISBN")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	if !kind.IsPointer {
+	if !info.IsPointer {
 		t.Error("Incorrectly reported pointer type")
 		return
 	}
-	if kind.Kind != reflect.String {
+	if info.Kind != reflect.String {
 		t.Error("Incorrectly reported kind")
 		return
 	}
