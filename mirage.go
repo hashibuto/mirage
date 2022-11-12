@@ -139,6 +139,14 @@ func (r *Reflection) InfoByTagKey(fieldName string) (*Info, error) {
 	return r.infoByIdx[idx], nil
 }
 
+func (r *Reflection) InfoByIdx(idx int) (*Info, error) {
+	if idx > len(r.infoByIdx) {
+		return nil, fmt.Errorf("Index is out of bounds")
+	}
+
+	return r.infoByIdx[idx], nil
+}
+
 // FieldByName returns a field struct by field name
 func (r *Reflection) FieldByName(fieldName string) (*reflect.StructField, error) {
 	idx, ok := r.idxByTagKey[fieldName]
