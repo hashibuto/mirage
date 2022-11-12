@@ -6,21 +6,19 @@ import (
 	"strings"
 )
 
-type Kind struct {
+type Info struct {
+	Name      string
+	TagKey    string
 	IsPointer bool
 	Kind      reflect.Kind
 }
 
-var Invalid = &Kind{
-	IsPointer: false,
-	Kind:      reflect.Invalid,
-}
-
 type Reflection struct {
+	namesByIdx  map[int]*Info
 	idxByName   map[string]int
 	idxByTagKey map[string]int
 	fieldByIdx  map[int]*reflect.StructField
-	kindByIdx   map[int]*Kind
+	infoByIdx   map[int]*Info
 	elem        reflect.Value
 }
 
@@ -29,7 +27,7 @@ func Reflect(obj any, tagName string) *Reflection {
 	idxByName := map[string]int{}
 	idxByTagKey := map[string]int{}
 	fieldByIdx := map[int]*reflect.StructField{}
-	kindByIdx := map[int]*Kind{}
+	infoByIdx := map[int]*Info{}
 
 	value := reflect.ValueOf(obj)
 	elem := value.Elem()
@@ -37,15 +35,19 @@ func Reflect(obj any, tagName string) *Reflection {
 	elemType := elem.Type()
 	for idx := 0; idx < numFields; idx++ {
 		field := elemType.Field(idx)
+		var tagKey string
 		if tagName == "" {
+			tagName = field.Name
 			idxByTagKey[field.Name] = idx
 		} else {
 			tag := field.Tag.Get(tagName)
 			if tag == "" {
-				idxByTagKey[field.Name] = idx
+				tagKey = field.Name
+
 			} else {
-				idxByTagKey[strings.Split(tag, ",")[0]] = idx
+				tagKey = strings.Split(tag, ",")[0]
 			}
+			idxByTagKey[tagKey] = idx
 		}
 		idxByName[field.Name] = idx
 		fieldByIdx[idx] = &field
@@ -57,7 +59,9 @@ func Reflect(obj any, tagName string) *Reflection {
 			kind = field.Type.Elem().Kind()
 			isPointer = true
 		}
-		kindByIdx[idx] = &Kind{
+		infoByIdx[idx] = &Info{
+			Name:      field.Name,
+			TagKey:    tagKey,
 			IsPointer: isPointer,
 			Kind:      kind,
 		}
@@ -67,7 +71,7 @@ func Reflect(obj any, tagName string) *Reflection {
 		idxByName:   idxByName,
 		idxByTagKey: idxByTagKey,
 		fieldByIdx:  fieldByIdx,
-		kindByIdx:   kindByIdx,
+		infoByIdx:   infoByIdx,
 		elem:        elem,
 	}
 }
@@ -117,22 +121,22 @@ func (r *Reflection) NewIo(obj any) *ReflectionIo {
 	}
 }
 
-// KindByName returns the reflect kind for a given field by name
-func (r *Reflection) KindByName(fieldName string) (*Kind, error) {
+// InfoByName returns the reflect kind for a given field by name
+func (r *Reflection) InfoByName(fieldName string) (*Info, error) {
 	idx, ok := r.idxByName[fieldName]
 	if !ok {
-		return Invalid, fmt.Errorf("Unknown field name \"%s\"", fieldName)
+		return nil, fmt.Errorf("Unknown field name \"%s\"", fieldName)
 	}
-	return r.kindByIdx[idx], nil
+	return r.infoByIdx[idx], nil
 }
 
-// KindByTagKey returns the reflect kind for a given tag key
-func (r *Reflection) KindByTagKey(fieldName string) (*Kind, error) {
+// InfoByTagKey returns the reflect kind for a given tag key
+func (r *Reflection) InfoByTagKey(fieldName string) (*Info, error) {
 	idx, ok := r.idxByTagKey[fieldName]
 	if !ok {
-		return Invalid, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
+		return nil, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
 	}
-	return r.kindByIdx[idx], nil
+	return r.infoByIdx[idx], nil
 }
 
 // FieldByName returns a field struct by field name
