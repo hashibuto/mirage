@@ -6,10 +6,21 @@ import (
 	"strings"
 )
 
+type Kind struct {
+	IsPointer bool
+	Kind      reflect.Kind
+}
+
+var Invalid = &Kind{
+	IsPointer: false,
+	Kind:      reflect.Invalid,
+}
+
 type Reflection struct {
 	idxByName   map[string]int
 	idxByTagKey map[string]int
 	fieldByIdx  map[int]reflect.StructField
+	kindByIdx   map[int]*Kind
 	elem        reflect.Value
 }
 
@@ -17,8 +28,9 @@ type Reflection struct {
 func Reflect(obj any, tagName string) *Reflection {
 	idxByName := map[string]int{}
 	idxByTagKey := map[string]int{}
-
 	fieldByIdx := map[int]reflect.StructField{}
+	kindByIdx := map[int]*Kind{}
+
 	value := reflect.ValueOf(obj)
 	elem := value.Elem()
 	numFields := elem.NumField()
@@ -37,12 +49,25 @@ func Reflect(obj any, tagName string) *Reflection {
 		}
 		idxByName[field.Name] = idx
 		fieldByIdx[idx] = field
+
+		kind := field.Type.Kind()
+		isPointer := false
+		if kind == reflect.Pointer {
+			// Indirect to get the underlying kind
+			kind = field.Type.Elem().Kind()
+			isPointer = true
+		}
+		kindByIdx[idx] = &Kind{
+			IsPointer: isPointer,
+			Kind:      kind,
+		}
 	}
 
 	return &Reflection{
 		idxByName:   idxByName,
 		idxByTagKey: idxByTagKey,
 		fieldByIdx:  fieldByIdx,
+		kindByIdx:   kindByIdx,
 		elem:        elem,
 	}
 }
@@ -93,21 +118,21 @@ func (r *Reflection) NewIo(obj any) *ReflectionIo {
 }
 
 // KindByName returns the reflect kind for a given field by name
-func (r *Reflection) KindByName(fieldName string) (reflect.Kind, error) {
+func (r *Reflection) KindByName(fieldName string) (*Kind, error) {
 	idx, ok := r.idxByName[fieldName]
 	if !ok {
-		return reflect.Invalid, fmt.Errorf("Unknown field name \"%s\"", fieldName)
+		return Invalid, fmt.Errorf("Unknown field name \"%s\"", fieldName)
 	}
-	return r.fieldByIdx[idx].Type.Kind(), nil
+	return r.kindByIdx[idx], nil
 }
 
 // KindByTagKey returns the reflect kind for a given tag key
-func (r *Reflection) KindByTagKey(fieldName string) (reflect.Kind, error) {
+func (r *Reflection) KindByTagKey(fieldName string) (*Kind, error) {
 	idx, ok := r.idxByTagKey[fieldName]
 	if !ok {
-		return reflect.Invalid, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
+		return Invalid, fmt.Errorf("Unknown tag key name \"%s\"", fieldName)
 	}
-	return r.fieldByIdx[idx].Type.Kind(), nil
+	return r.kindByIdx[idx], nil
 }
 
 type ReflectionIo struct {
