@@ -245,3 +245,85 @@ func (r *ReflectionIo) SetValueByTagKey(tagKey string, value any) error {
 	r.valueByIdx[idx].Set(reflect.ValueOf(value))
 	return nil
 }
+
+// IsNilPointerByIdx returns true if the underlying value is a nil pointer
+func (r *ReflectionIo) IsNilPointerByIdx(idx int) (bool, error) {
+	if idx > len(r.valueByIdx) {
+		return false, fmt.Errorf("Index is out of bounds")
+	}
+	info := r.reflection.infoByIdx[idx]
+	if !info.IsPointer {
+		return false, nil
+	}
+
+	return r.valueByIdx[idx].IsNil(), nil
+}
+
+// IsNilPointerByName returns true if the underlying value is a nil pointer
+func (r *ReflectionIo) IsNilPointerByName(name string) (bool, error) {
+	idx, ok := r.reflection.idxByName[name]
+	if !ok {
+		return false, fmt.Errorf("Field name \"%s\" does not exist", name)
+	}
+	if idx > len(r.valueByIdx) {
+		return false, fmt.Errorf("Index is out of bounds")
+	}
+	info := r.reflection.infoByIdx[idx]
+	if !info.IsPointer {
+		return false, nil
+	}
+
+	return r.valueByIdx[idx].IsNil(), nil
+}
+
+// IsNilPointerByTagKey returns true if the underlying value is a nil pointer
+func (r *ReflectionIo) IsNilPointerByTagKey(tagKey string) (bool, error) {
+	idx, ok := r.reflection.idxByTagKey[tagKey]
+	if !ok {
+		return false, fmt.Errorf("Tag key \"%s\" does not exist", tagKey)
+	}
+	if idx > len(r.valueByIdx) {
+		return false, fmt.Errorf("Index is out of bounds")
+	}
+	info := r.reflection.infoByIdx[idx]
+	if !info.IsPointer {
+		return false, nil
+	}
+
+	return r.valueByIdx[idx].IsNil(), nil
+}
+
+// InstantiateByIdx instantiates a new empty value of the field type and assigns it to the field
+func (r *ReflectionIo) InstantiateByIdx(idx int) error {
+	if idx > len(r.valueByIdx) {
+		return fmt.Errorf("Index is out of bounds")
+	}
+
+	field := r.reflection.fieldByIdx[idx]
+	t := field.Type.Elem()
+	v := reflect.New(t).Interface()
+	valof := reflect.ValueOf(v)
+	r.valueByIdx[idx].Set(valof)
+
+	return nil
+}
+
+// InstantiateByName instantiates a new empty value of the field type and assigns it to the field
+func (r *ReflectionIo) InstantiateByName(name string) error {
+	idx, ok := r.reflection.idxByName[name]
+	if !ok {
+		return fmt.Errorf("Field name \"%s\" does not exist", name)
+	}
+
+	return r.InstantiateByIdx(idx)
+}
+
+// InstantiateByTagKey instantiates a new empty value of the field type and assigns it to the field
+func (r *ReflectionIo) InstantiateByTagKey(tagKey string) error {
+	idx, ok := r.reflection.idxByTagKey[tagKey]
+	if !ok {
+		return fmt.Errorf("Tag key \"%s\" does not exist", tagKey)
+	}
+
+	return r.InstantiateByIdx(idx)
+}
