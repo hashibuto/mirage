@@ -215,8 +215,8 @@ func (r *ReflectionIo) ValueFromTagKey(tagKey string) (any, error) {
 	return r.valueByIdx[idx].Interface(), nil
 }
 
-// SetValueIdx sets a value on the reflected object using the field index
-func (r *ReflectionIo) SetValueIdx(idx int, value any) error {
+// SetValueByIdx sets a value on the reflected object using the field index
+func (r *ReflectionIo) SetValueByIdx(idx int, value any) error {
 	if idx > len(r.reflection.idxByName) {
 		return fmt.Errorf("Supplied index is out of range")
 	}
