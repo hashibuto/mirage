@@ -3,6 +3,7 @@ package mirage
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 type Book struct {
@@ -10,6 +11,11 @@ type Book struct {
 	Author   string  `json:"author"`
 	NumPages int     `json:"num_pages"`
 	ISBN     *string `json:"isbn"`
+}
+
+type Journal struct {
+	Date  *time.Time `json:"date"`
+	Title string     `json:"title"`
 }
 
 func TestReflect(t *testing.T) {
@@ -217,4 +223,18 @@ func TestKindByNameNullable(t *testing.T) {
 		t.Error("Incorrectly reported kind")
 		return
 	}
+}
+
+func TestSetGenericValueOnPointer(t *testing.T) {
+	myJournal := &Journal{
+		Title: "fun times",
+	}
+
+	meta := Reflect(myJournal, "")
+	mio := meta.Io()
+
+	tm := time.Now()
+	tmp := &tm
+	var tm2 any = tmp
+	mio.SetValueByName("Date", tm2)
 }
