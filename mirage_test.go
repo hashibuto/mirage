@@ -246,29 +246,10 @@ func TestInstantiate(t *testing.T) {
 		NumPages: 333,
 	}
 	meta := Reflect(book, "")
-	meta.Io().InstantiateByName("ISBN")
-
-	isNilPtr, _ := meta.Io().IsNilPointerByName("ISBN")
-	if isNilPtr {
+	isbn, _ := meta.Io().InstantiateByName("ISBN")
+	strIsbn := isbn.(*string)
+	if *strIsbn != "" {
 		t.Errorf("Should not be a nil pointer")
 		return
-	}
-}
-
-func TestInstantiate2(t *testing.T) {
-	type Inner struct {
-		X string
-	}
-
-	type Outer struct {
-		Inner *Inner
-	}
-
-	out := &Outer{}
-	meta := Reflect(out, "")
-	meta.Io().InstantiateByName("Inner")
-
-	if out.Inner.X != "" {
-		t.Errorf("Problem instantiating field")
 	}
 }
