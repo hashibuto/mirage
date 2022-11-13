@@ -24,9 +24,9 @@ import "github.com/hashibuto/mirage"
   - [func (r *Reflection) NumFields() int](<#func-reflection-numfields>)
   - [func (r *Reflection) TagKeys() []string](<#func-reflection-tagkeys>)
 - [type ReflectionIo](<#type-reflectionio>)
-  - [func (r *ReflectionIo) InstantiateByIdx(idx int) error](<#func-reflectionio-instantiatebyidx>)
-  - [func (r *ReflectionIo) InstantiateByName(name string) error](<#func-reflectionio-instantiatebyname>)
-  - [func (r *ReflectionIo) InstantiateByTagKey(tagKey string) error](<#func-reflectionio-instantiatebytagkey>)
+  - [func (r *ReflectionIo) InstantiateByIdx(idx int) (any, error)](<#func-reflectionio-instantiatebyidx>)
+  - [func (r *ReflectionIo) InstantiateByName(name string) (any, error)](<#func-reflectionio-instantiatebyname>)
+  - [func (r *ReflectionIo) InstantiateByTagKey(tagKey string) (any, error)](<#func-reflectionio-instantiatebytagkey>)
   - [func (r *ReflectionIo) IsNilPointerByIdx(idx int) (bool, error)](<#func-reflectionio-isnilpointerbyidx>)
   - [func (r *ReflectionIo) IsNilPointerByName(name string) (bool, error)](<#func-reflectionio-isnilpointerbyname>)
   - [func (r *ReflectionIo) IsNilPointerByTagKey(tagKey string) (bool, error)](<#func-reflectionio-isnilpointerbytagkey>)
@@ -173,26 +173,26 @@ type ReflectionIo struct {
 ### func \(\*ReflectionIo\) [InstantiateByIdx](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L297>)
 
 ```go
-func (r *ReflectionIo) InstantiateByIdx(idx int) error
+func (r *ReflectionIo) InstantiateByIdx(idx int) (any, error)
 ```
 
-InstantiateByIdx instantiates a new empty value of the field type and assigns it to the field
+InstantiateByIdx instantiates a new empty value of the field type and returns it
 
-### func \(\*ReflectionIo\) [InstantiateByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L312>)
+### func \(\*ReflectionIo\) [InstantiateByName](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L309>)
 
 ```go
-func (r *ReflectionIo) InstantiateByName(name string) error
+func (r *ReflectionIo) InstantiateByName(name string) (any, error)
 ```
 
-InstantiateByName instantiates a new empty value of the field type and assigns it to the field
+InstantiateByName instantiates a new empty value of the field type and returns it
 
-### func \(\*ReflectionIo\) [InstantiateByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L322>)
+### func \(\*ReflectionIo\) [InstantiateByTagKey](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L319>)
 
 ```go
-func (r *ReflectionIo) InstantiateByTagKey(tagKey string) error
+func (r *ReflectionIo) InstantiateByTagKey(tagKey string) (any, error)
 ```
 
-InstantiateByTagKey instantiates a new empty value of the field type and assigns it to the field
+InstantiateByTagKey instantiates a new empty value of the field type and returns it
 
 ### func \(\*ReflectionIo\) [IsNilPointerByIdx](<https://github.com/hashibuto/mirage/blob/master/mirage.go#L250>)
 
