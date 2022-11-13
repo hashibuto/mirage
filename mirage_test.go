@@ -225,16 +225,50 @@ func TestKindByNameNullable(t *testing.T) {
 	}
 }
 
-func TestSetGenericValueOnPointer(t *testing.T) {
-	myJournal := &Journal{
-		Title: "fun times",
+func TestNilPointerCheck(t *testing.T) {
+	book := &Book{
+		Title:    "Mr. Black",
+		Author:   "Mrs. White",
+		NumPages: 333,
+	}
+	meta := Reflect(book, "")
+	isNilPtr, _ := meta.Io().IsNilPointerByName("ISBN")
+	if !isNilPtr {
+		t.Errorf("Unable to detect nil pointer")
+		return
+	}
+}
+
+func TestInstantiate(t *testing.T) {
+	book := &Book{
+		Title:    "Mr. Black",
+		Author:   "Mrs. White",
+		NumPages: 333,
+	}
+	meta := Reflect(book, "")
+	meta.Io().InstantiateByName("ISBN")
+
+	isNilPtr, _ := meta.Io().IsNilPointerByName("ISBN")
+	if isNilPtr {
+		t.Errorf("Should not be a nil pointer")
+		return
+	}
+}
+
+func TestInstantiate2(t *testing.T) {
+	type Inner struct {
+		X string
 	}
 
-	meta := Reflect(myJournal, "")
-	mio := meta.Io()
+	type Outer struct {
+		Inner *Inner
+	}
 
-	tm := time.Now()
-	tmp := &tm
-	var tm2 any = tmp
-	mio.SetValueByName("Date", tm2)
+	out := &Outer{}
+	meta := Reflect(out, "")
+	meta.Io().InstantiateByName("Inner")
+
+	if out.Inner.X != "" {
+		t.Errorf("Problem instantiating field")
+	}
 }
