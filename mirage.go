@@ -9,12 +9,12 @@ import (
 type Info struct {
 	Name      string
 	TagKey    string
+	TagParts  []string
 	IsPointer bool
 	Kind      reflect.Kind
 }
 
 type Reflection struct {
-	namesByIdx  map[int]*Info
 	idxByName   map[string]int
 	idxByTagKey map[string]int
 	fieldByIdx  map[int]*reflect.StructField
@@ -36,6 +36,7 @@ func Reflect(obj any, tagName string) *Reflection {
 	for idx := 0; idx < numFields; idx++ {
 		field := elemType.Field(idx)
 		var tagKey string
+		var tagParts []string
 		if tagName == "" {
 			tagName = field.Name
 			idxByTagKey[field.Name] = idx
@@ -45,7 +46,8 @@ func Reflect(obj any, tagName string) *Reflection {
 				tagKey = field.Name
 
 			} else {
-				tagKey = strings.Split(tag, ",")[0]
+				tagParts = strings.Split(tag, ",")
+				tagKey = tagParts[0]
 			}
 			idxByTagKey[tagKey] = idx
 		}
@@ -62,6 +64,7 @@ func Reflect(obj any, tagName string) *Reflection {
 		infoByIdx[idx] = &Info{
 			Name:      field.Name,
 			TagKey:    tagKey,
+			TagParts:  tagParts,
 			IsPointer: isPointer,
 			Kind:      kind,
 		}
